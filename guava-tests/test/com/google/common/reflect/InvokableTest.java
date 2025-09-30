@@ -35,6 +35,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.Collections;
+import java.util.List;
+
 import junit.framework.TestCase;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
@@ -362,10 +364,11 @@ public class InvokableTest extends TestCase {
 
   public void testInstanceMethod_exceptionTypes() throws Exception {
     Invokable<?, ?> delegate = Prepender.method("prepend", Iterable.class);
-    assertEquals(
-        ImmutableList.of(
-            TypeToken.of(IllegalArgumentException.class), TypeToken.of(NullPointerException.class)),
-        delegate.getExceptionTypes());
+    List<TypeToken<? extends Throwable>> expected = ImmutableList.of(
+      TypeToken.of(IllegalArgumentException.class), TypeToken.of(NullPointerException.class));
+
+    List<TypeToken<? extends Throwable>> actual = delegate.getExceptionTypes();
+    assertThat(actual).containsExactlyElementsIn(expected);
   }
 
   public void testInstanceMethod_typeParameters() throws Exception {
